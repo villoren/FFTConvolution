@@ -1,0 +1,6 @@
+.idea/
+bin/
+jar/
+demo/*.class
+demo.*
+**.wav

@@ -1,0 +1,60 @@
+<project name="FFTConvolution" default="build" basedir=".">
+
+    <property name="src.dir" value="src" />
+    <property name="bin.dir" value="bin" />
+    <property name="doc.dir" value="doc" />
+    <property name="jar.dir" value="jar" />
+    <property name="demo.dir" value="demo" />
+
+    <property name="jar.file" value="fft-convolution" />
+    <property name="demo.file" value="ConvolutionDemo" />
+
+    <property name="demo.batch.template" value="demo.bat.template" />
+    <property name="demo.bash.template" value="demo.sh.template" />
+
+    <property name="demo.batch.target" value="demo.bat" />
+    <property name="demo.bash.target" value="demo.sh" />
+
+    <target name="compile" description="compile sources">
+        <mkdir dir="${bin.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false" />
+    </target>
+
+    <target name="doc" description="create javadoc">
+        <mkdir dir="${doc.dir}" />
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}" author="true" />
+    </target>
+
+    <target name="jar" depends="compile" description="generate jar library">
+        <mkdir dir="${jar.dir}" />
+        <jar destfile="${jar.dir}/${jar.file}.jar">
+            <fileset dir="${bin.dir}" />
+            <fileset dir="${src.dir}" includes="**/*.java" />
+        </jar>
+    </target>
+
+    <target name="build" depends="jar" description="build convolution demo">
+        <javac srcdir="${demo.dir}" destdir="${demo.dir}" classpath="${jar.dir}/${jar.file}.jar" includeantruntime="false">
+            <include name="**/*.java" />
+        </javac>
+        <copy file="${demo.dir}/${demo.batch.template}" tofile="./${demo.batch.target}" overwrite="true">
+            <filterset>
+                <filter token="CLASSPATH" value="${demo.dir};${jar.dir}\${jar.file}.jar" />
+                <filter token="TEST_FILE" value="${demo.file}" />
+            </filterset>
+        </copy>
+        <copy file="${demo.dir}/${demo.bash.template}" tofile="./${demo.bash.target}" overwrite="true">
+            <filterset>
+                <filter token="CLASSPATH" value="${demo.dir}:${jar.dir}/${jar.file}.jar" />
+                <filter token="TEST_FILE" value="${demo.file}" />
+            </filterset>
+        </copy>
+    </target>
+
+    <target name="clean" description="clean binaries and jar">
+        <delete dir="${bin.dir}" />
+        <delete dir="${doc.dir}" />
+        <delete dir="${jar.dir}" />
+        <delete file="${demo.dir}/${demo.file}.class" />
+    </target>
+</project>
