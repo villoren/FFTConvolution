@@ -69,6 +69,33 @@ public class ConvolutionComplexD extends AbstractConvolutionD {
     }
 
     /**
+     * Constructor.
+     * <p>
+     * Creates a new instance of <code>ConvolutionComplex</code>,
+     * inheriting the size and reusing <code>FourierTransform</code> and
+     * <code>DefaultWindow</code> objects from the given instance.
+     * <p>
+     * This comes handy if you need more Convolution instances to process several
+     * equal sized buffers at once (such as 5.1 audio channels),
+     * and want to reuse <code>FourierTransform</code> object
+     * with its lookup tables (since they're common to a given fft size).
+     * <p>
+     * <i>Other internal buffers, such as pending overlap-add samples,
+     * are <u>not</u> copied.</i>
+     *
+     * @param convolutionComplex Instance to reuse <code>FourierTransform</code> and <code>DefaultWindow</code> from.
+     */
+    public ConvolutionComplexD(ConvolutionComplexD convolutionComplex) {
+
+        super(convolutionComplex);
+
+        // Transitional data
+        mPreConvolutionTimeDomain  = new ComplexBufferD(mFftSize);
+        mPostConvolutionTimeDomain = new ComplexBufferD(mFftSize);
+        mPendingTimeDomain         = new ComplexBufferD(mSize);
+    }
+
+    /**
      * Sets a <code>FilterKernel</code> to be used by this <code>Convolution</code>.
      * <p>
      * To prevent aliasing, the kernel's impulse response should be:

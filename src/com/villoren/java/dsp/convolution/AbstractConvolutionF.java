@@ -116,6 +116,41 @@ public abstract class AbstractConvolutionF {
     }
 
     /**
+     * Constructor called by subclasses.
+     * <p>
+     * Creates a new instance of <code>AbstractConvolution</code>,
+     * inheriting the size and reusing <code>FourierTransform</code> and
+     * <code>DefaultWindow</code> objects from the given instance.
+     * <p>
+     * This comes handy if you need more Convolution instances to process several
+     * equal sized buffers at once (such as 5.1 audio channels),
+     * and want to reuse <code>FourierTransform</code> object
+     * with its lookup tables (since they're common to a given fft size).
+     * <p>
+     * <i>Other internal buffers are <u>not</u> copied.</i>
+     *
+     * @param abstractConvolution Instance to reuse <code>FourierTransform</code> and <code>DefaultWindow</code> from.
+     */
+    public AbstractConvolutionF(AbstractConvolutionF abstractConvolution) {
+
+        // Sizes
+        mSize = abstractConvolution.mSize;
+        mFftSize = abstractConvolution.mFftSize;
+        mWindowSize = abstractConvolution.mWindowSize;
+
+        // Tools
+        mFourierTransform = abstractConvolution.mFourierTransform;
+        mDefaultWindow = abstractConvolution.mDefaultWindow;
+
+        // Filter
+        mFrequencyResponse = new FrequencyResponseF(this);
+
+        // Transitional data
+        mPreConvolutionFreqDomain = new ComplexBufferF(mFftSize);
+        mPostConvolutionFreqDomain = new ComplexBufferF(mFftSize);
+    }
+
+    /**
      * Sets a <code>FilterKernel</code> to be used by this <code>Convolution</code>.
      * <p>
      * To prevent aliasing, the kernel's impulse response should be:

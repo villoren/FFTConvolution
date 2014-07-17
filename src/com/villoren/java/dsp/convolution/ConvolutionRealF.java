@@ -71,6 +71,33 @@ public class ConvolutionRealF  extends AbstractConvolutionF {
     }
 
     /**
+     * Constructor.
+     * <p>
+     * Creates a new instance of <code>ConvolutionReal</code>,
+     * inheriting the size and reusing <code>FourierTransform</code> and
+     * <code>DefaultWindow</code> objects from the given instance.
+     * <p>
+     * This comes handy if you need more Convolution instances to process several
+     * equal sized buffers at once (such as 5.1 audio channels),
+     * and want to reuse <code>FourierTransform</code> object
+     * with its lookup tables (since they're common to a given fft size).
+     * <p>
+     * <i>Other internal buffers, such as pending overlap-add samples,
+     * are <u>not</u> copied.</i>
+     *
+     * @param convolutionReal Instance to reuse <code>FourierTransform</code> and <code>DefaultWindow</code> from.
+     */
+    public ConvolutionRealF(ConvolutionRealF convolutionReal) {
+
+        super(convolutionReal);
+
+        // Transitional data
+        mPreConvolutionTimeDomain  = new ComplexBufferF(mFftSize);
+        mPostConvolutionTimeDomain = new ComplexBufferF(mFftSize);
+        mPendingTimeDomain         = new float[mSize];
+    }
+
+    /**
      * Convolve the time-domain complex signal contained in <code>inReal[]</code> and <code>inImag[]</code>
      * with the current {@link FilterKernelF}.
      * <p>
