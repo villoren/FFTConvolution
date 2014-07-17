@@ -44,7 +44,7 @@ public abstract class AbstractWindowF {
     protected final float[] mWindow;
 
     /**
-     * Constructor. Allocates the array leaving the setting of it's values to sub classes.
+     * Constructor. Allocates the array leaving the setting of its values to sub classes.
      *
      * @param size Size of this window.
      */
